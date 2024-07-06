@@ -1,0 +1,217 @@
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>To Do List</title>
+	<style>
+		table {
+		  font-family: arial, sans-serif;
+		  border-collapse: collapse;
+		  width: 100%;
+		}
+
+		td, th {
+		  border: 1px solid #dddddd;
+		  text-align: left;
+		  padding: 8px;
+		}
+
+		/*tr:nth-child(even) {
+		  background-color: #dddddd;
+		}*/
+		.topic {
+		  background-color: #dddddd;
+		}
+		input[type=checkbox]{
+		  /* Double-sized Checkboxes */
+		  -ms-transform: scale(2); /* IE */
+		  -moz-transform: scale(2); /* FF */
+		  -webkit-transform: scale(2); /* Safari and Chrome */
+		  -o-transform: scale(2); /* Opera */
+		  transform: scale(2);
+		}
+	</style>
+</head>
+<body>
+	<div id="msg" style="padding:1%;font-size: 1.2vw;background-color: #a0ffa0;display: none;"></div>
+	<span>
+		<label>Search </label>
+		<input type="text" onchange="search(this);" placeholder="press enter for search.">
+		<button onclick="download('To_Do_List.html');">Save</button>
+		<button onclick="addTopic();">Add New Topic</button>
+	</span>
+	<table>
+		<tbody id="tbl">
+			<tr>
+				<td>
+					<table>
+						<tbody>
+							<tr>
+								<td>No</td>
+								<td colspan="3">Topic</td>
+								<td>Action</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td>Check</td>
+								<td>Description</td>
+								<td>Priority</td>
+								<td>Action</td>		
+							</tr>
+						</tbody>
+					</table>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+
+
+
+<script type="text/javascript">
+
+	function download(filename) {
+	 var element = document.createElement('a');
+	 element.setAttribute('href', 'data:text/plain;charset=utf-8,' + 
+	 encodeURIComponent(document.querySelector("html").innerHTML));
+	 element.setAttribute('download', filename);
+
+	  element.style.display = 'none';
+	  document.body.appendChild(element);
+
+	  element.click();
+
+	  document.body.removeChild(element);
+	}
+	function addTopic(){
+		let topic = prompt("Please enter new Topic name.", "");
+		if(topic==null) return;
+		topic = topic.trim();
+		if(topic=="" || topic==" ") return;
+		let table = document.getElementById("tbl");
+		let res = `
+			<tr>
+				<td>
+					<table>
+						<tbody>
+							<tr class="topic">
+								<td>`+(table.getElementsByClassName("topic").length+1)+`</td>
+								<td colspan="3">`+topic+`</td>
+								<td><button onclick="addSubject(this);">Add</button><button onclick="editTopic(this);">Edit</button><button onclick="removeTopic(this);">Delete</button></td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+			</tr>
+		`;
+		table.innerHTML += res;
+		sort();
+	}
+	function editTopic(e){
+		let td = e.parentElement.parentElement.getElementsByTagName("td");
+		td[1].innerHTML = "<input type='text' value='"+td[1].innerHTML+"' />";
+		td[2].innerHTML = "<button onclick='editTopicDone(this);'>done</button>";
+	}
+	function editTopicDone(e){
+		let td = e.parentElement.parentElement.getElementsByTagName("td");
+		td[1].innerHTML = td[1].getElementsByTagName('input')[0].value;
+		td[2].innerHTML = '<button onclick="addSubject(this);">Add</button><button onclick="editTopic(this);">Edit</button><button onclick="removeTopic(this);">Delete</button>';
+		sort();
+	}
+	function removeTopic(e){
+		let table = e.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;
+		table.remove();
+		// Re Number
+		let rows = document.getElementsByClassName("topic");
+		for (i = 0; i < rows.length; i++)
+			rows[i].getElementsByTagName("TD")[0].innerHTML = i+1;
+	}
+	function addSubject(e){
+		let tbl = e.parentElement.parentElement.parentElement;
+		let res = `<tr>
+						<td></td>
+						<td><input type="checkbox" onchange="chekboxSelected(this);" /></td>
+						<td><input type="text" placeholder="Enter Description" /></td>
+						<td><select><option>Low</option><option>Medium</option><option>High</option></select></td>
+						<td><button onclick="editSubjectDone(this);">done</button></td>		
+					</tr>`;
+		tbl.innerHTML += res;
+	}
+	function editSubject(e){
+		let td = e.parentElement.parentElement.getElementsByTagName("td");
+		td[2].innerHTML = "<input type='text' placeholder='Enter Description' value='"+td[2].innerHTML+"' />";
+		if(td[3].innerHTML=="High") td[3].innerHTML = "<select><option>Low</option><option>Medium</option><option selected>High</option></select>";
+		else if(td[3].innerHTML=="Medium") td[3].innerHTML = "<select><option>Low</option><option selected>Medium</option><option>High</option></select>";
+		else td[3].innerHTML = "<select><option>Low</option><option>Medium</option><option>High</option></select>";
+		td[4].innerHTML = "<button onclick='editSubjectDone(this);'>done</button>";
+	}
+	function editSubjectDone(e){
+		let td = e.parentElement.parentElement.getElementsByTagName("td");
+		td[2].innerHTML = td[2].getElementsByTagName('input')[0].value.trim();
+		td[3].innerHTML = td[3].getElementsByTagName('select')[0].value.trim();
+		td[4].innerHTML = "<button onclick=\"editSubject(this);\">Edit</button><button onclick=\"removeSubject(this);\">Delete</button>";
+		// sort();	
+	}
+	function removeSubject(e){
+		let table = e.parentElement.parentElement;
+		table.remove();
+	}
+	function sort() {
+		var table, rows, switching, i, x, y, shouldSwitch,tmp;
+		table = document.getElementById("tbl").parentElement;
+		switching = true;
+		/*Make a loop that will continue until
+		no switching has been done:*/
+		while (switching) {
+			//start by saying: no switching is done:
+			switching = false;
+			rows = table.getElementsByClassName("topic");
+			/*Loop through all table rows (except the
+			first, which contains table headers):*/
+			for (i = 0; i < (rows.length - 1); i++) {
+				//start by saying there should be no switching:
+				shouldSwitch = false;
+				/*Get the two elements you want to compare,
+				one from current row and one from the next:*/
+				x = rows[i].getElementsByTagName("TD")[1];
+				y = rows[i + 1].getElementsByTagName("TD")[1];
+				//check if the two rows should switch place:
+				if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+					//if so, mark as a switch and break the loop:
+					shouldSwitch = true;
+					break;
+				}
+			}
+			if (shouldSwitch) {
+				/*If a switch has been marked, make the switch
+				and mark that a switch has been done:*/
+				tmp = rows[i].getElementsByTagName("TD")[0].innerHTML;
+				rows[i].getElementsByTagName("TD")[0].innerHTML = rows[i+1].getElementsByTagName("TD")[0].innerHTML;
+				rows[i+1].getElementsByTagName("TD")[0].innerHTML = tmp;
+				rows[i].parentNode.parentNode.parentNode.parentNode.parentNode.insertBefore(rows[i + 1].parentNode.parentNode.parentNode.parentNode, rows[i].parentNode.parentNode.parentNode.parentNode);
+				switching = true;
+			}
+		  }
+	}
+	function search(e){
+		let tr = document.getElementsByClassName("topic");
+		let td;
+		let filter = e.value.toUpperCase();
+		for (i = 0; i < tr.length; i++) {
+			td = tr[i].getElementsByTagName("td")[1];
+			if(td){
+				td = td.textContent || td.innerText;
+				if (td.toUpperCase().indexOf(filter) > -1) {
+					tr[i].parentNode.parentNode.parentNode.parentNode.style.display = "";
+				} else {
+					tr[i].parentNode.parentNode.parentNode.parentNode.style.display = "none";
+				}
+			}
+		}
+	}
+	function chekboxSelected(e){
+		if(e.checked) e.setAttribute("checked", "");
+		else e.removeAttribute("checked", "");
+	}
+</script>
+
+</body>
