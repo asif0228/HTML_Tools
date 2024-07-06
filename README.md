@@ -20,3 +20,14 @@ Collections of tools bases on HTML, CSS, JS only
 - "Edit" to edit the specific Series
 - "Delete" to delete the specific Series
 - Right click and save as over the current file for keeping Series Tracks saved.
+
+## To DO List
+- Download "To_Do_List.html" and open in browser
+- "Add New Topic" to add new list.
+- Search for searching (type and press enter, to reset clear search box and press enter).
+- "Add" to add new Item
+- "Edit" to edit the specific Topic / Item
+- "Delete" to delete the specific Topic / Item
+- Right click and save as over the current file for keeping Series Tracks saved.
+
+## More Coming Soon
