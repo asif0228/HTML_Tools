@@ -1,0 +1,199 @@
+
+<!-- saved from url=(0046)file:///D:/HTML_Tools/Series_Tracker.html.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Series Tracker</title>
+	<style>
+		table {
+		  font-family: arial, sans-serif;
+		  border-collapse: collapse;
+		  width: 100%;
+		}
+
+		td, th {
+		  border: 1px solid #dddddd;
+		  text-align: left;
+		  padding: 8px;
+		}
+
+		tr:nth-child(even) {
+		  background-color: #dddddd;
+		}
+	</style>
+</head>
+<body>
+	<label>Search </label>
+	<input type="text" onchange="search(this);" placeholder="press enter for search.">
+	<button onclick="download(&#39;anime.html&#39;);">Save</button>
+	<button onclick="add();">Add New</button>
+	<button onclick="showHide(this);">show</button>
+	<table>
+		<tbody id="tbl">
+			<tr>
+				<td>No</td>
+				<td>Name</td>
+				<td>Season</td>
+				<td>Episode</td>
+				<td>Watched</td>
+				<td>Status</td>
+				<td>Action</td>
+			</tr>
+		<tr style="background-color: lightgreen;">
+						<td>1</td>
+						<td>Series 1</td>
+						<td>1</td>
+						<td>25</td>
+						<td>12</td>
+						<td>show</td>
+						<td><button onclick="edit(this);">Edit</button><button onclick="remove(this);" '="">Delete</button></td>
+					</tr></tbody>
+	</table>
+
+
+
+
+<script type="text/javascript">
+	showHide(null);
+	function download(filename) {
+	 var element = document.createElement('a');
+	 element.setAttribute('href', 'data:text/plain;charset=utf-8,' + 
+	 encodeURIComponent(document.querySelector("html").innerHTML));
+	 element.setAttribute('download', filename);
+
+	  element.style.display = 'none';
+	  document.body.appendChild(element);
+
+	  element.click();
+
+	  document.body.removeChild(element);
+	}
+	function edit(e){
+		let td = e.parentElement.parentElement.getElementsByTagName("td");
+		for(let i=1;i<td.length-2;i++){
+			td[i].innerHTML = "<input type='text' value='"+td[i].innerHTML+"' />";
+		}
+		let option = "<select>";
+		if(td[td.length-2].innerHTML=="show") option+= "<option>show</option><option>hide</option>";
+		else  option += "<option>hide</option><option>show</option>";
+		option += "</select>";
+		td[td.length-2].innerHTML = option;
+		td[td.length-1].innerHTML = "<button onclick='done(this);'>done</button>";
+	}
+	function remove(e){
+		e.parentElement.parentElement.remove();
+		// Re Number
+		rows = document.getElementById("tbl").parentElement.rows;
+		for (i = 1; i < (rows.length - 1); i++)
+			rows[i].getElementsByTagName("TD")[0].innerHTML = i;
+	}
+	function done(e){
+		let td = e.parentElement.parentElement.getElementsByTagName("td");
+		for(let i=1;i<td.length-2;i++){
+			td[i].innerHTML = td[i].getElementsByTagName('input')[0].value;
+		}
+		td[td.length-2].innerHTML = td[td.length-2].getElementsByTagName('select')[0].value;
+		td[td.length-1].innerHTML = "<button onclick='edit(this);'>Edit</button><button onclick='remove(this);''>Delete</button>";
+		sort();
+		showHide(null);
+	}
+	function add(){
+		let tbl = document.getElementById("tbl");
+		let res = `<tr>
+						<td>`+tbl.getElementsByTagName("tr").length+`</td>
+						<td><input type="text" value=""></td>
+						<td><input type="text" value=""></td>
+						<td><input type="text" value=""></td>
+						<td><input type="text" value=""></td>
+						<td><select><option>show</option><option>hide</option></select></td>
+						<td><button onclick="done(this);">done</button></td>
+					</tr>`;
+		tbl.innerHTML += res;
+	}
+	function showHide(e){
+		let dis = "none";
+		if(e!=null){
+			if(e.innerHTML=="show"){
+				e.innerHTML = "hide";
+				dis = "";
+			}else{
+				e.innerHTML = "show";
+				dis = "none";
+			}
+		}
+		let rows = document.getElementById("tbl").getElementsByTagName("tr");
+		let cols;
+		for(let i=1;i<rows.length;i++){
+			cols = rows[i].getElementsByTagName("td");
+			if(cols[cols.length-2].innerHTML=="hide") rows[i].style.display = dis;
+			else rows[i].style.display = "";
+			rows[i].style.backgroundColor	 = "";
+			if(cols[4].innerHTML!="complete" && cols[3].innerHTML!=cols[4].innerHTML) rows[i].style.backgroundColor	 = "lightgreen";
+		}
+	}
+	function sort() {
+		var table, rows, switching, i, x, y, shouldSwitch,tmp;
+		table = document.getElementById("tbl").parentElement;
+		switching = true;
+		/*Make a loop that will continue until
+		no switching has been done:*/
+		while (switching) {
+			//start by saying: no switching is done:
+			switching = false;
+			rows = table.rows;
+			/*Loop through all table rows (except the
+			first, which contains table headers):*/
+			for (i = 1; i < (rows.length - 1); i++) {
+				//start by saying there should be no switching:
+				shouldSwitch = false;
+				/*Get the two elements you want to compare,
+				one from current row and one from the next:*/
+				x = rows[i].getElementsByTagName("TD")[1];
+				y = rows[i + 1].getElementsByTagName("TD")[1];
+				//check if the two rows should switch place:
+				if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+					//if so, mark as a switch and break the loop:
+					shouldSwitch = true;
+					break;
+				}
+				//compare season
+				if(x.innerHTML.toLowerCase() == y.innerHTML.toLowerCase()){
+					x = rows[i].getElementsByTagName("TD")[2];
+					y = rows[i + 1].getElementsByTagName("TD")[2];
+					if ( parseInt(x.innerHTML) > parseInt(y.innerHTML) ) {
+						//if so, mark as a switch and break the loop:
+						shouldSwitch = true;
+						break;
+					}
+				}
+			}
+			if (shouldSwitch) {
+				/*If a switch has been marked, make the switch
+				and mark that a switch has been done:*/
+				tmp = rows[i].getElementsByTagName("TD")[0].innerHTML;
+				rows[i].getElementsByTagName("TD")[0].innerHTML = rows[i+1].getElementsByTagName("TD")[0].innerHTML;
+				rows[i+1].getElementsByTagName("TD")[0].innerHTML = tmp;
+				rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+				switching = true;
+			}
+		  }
+	}
+	function search(e){
+		let tr = document.getElementById("tbl").getElementsByTagName("tr");
+		let td;
+		let filter = e.value.toUpperCase();
+		for (i = 1; i < tr.length; i++) {
+			td = tr[i].getElementsByTagName("td")[1];
+			if(td){
+				td = td.textContent || td.innerText;
+				if (td.toUpperCase().indexOf(filter) > -1) {
+					tr[i].style.display = "";
+				} else {
+					tr[i].style.display = "none";
+				}
+			}
+		}
+	}
+</script>
+
+</body></html>
