@@ -1,0 +1,253 @@
+
+<!-- saved from url=(0035)file:///D:/HTML_Tools/bookmark.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Bookmarks</title>
+	<style>
+		table {
+		  font-family: arial, sans-serif;
+		  border-collapse: collapse;
+		  width: 100%;
+		}
+
+		td, th {
+		  border: 1px solid #dddddd;
+		  text-align: left;
+		  padding: 8px;
+		}
+
+		tr:nth-child(even) {
+		  background-color: #dddddd;
+		}
+	</style>
+</head>
+<body>
+	<div id="msg" style="padding: 1%; font-size: 1.2vw; background-color: rgb(160, 255, 160); display: none;">copied to clipboard.</div>
+	<label>Search </label>
+	<input type="text" onchange="search(this);" placeholder="press enter for search.">
+	<button onclick="download(&#39;bookmark.html&#39;);">Save</button>
+	<button onclick="add();">Add New</button>
+	<button onclick="showHideCategory(this);">Show Category</button>
+	<table>
+		<tbody id="tbl">
+			<tr>
+				<td>No</td>
+				<td>Category</td>
+				<td>name</td>
+				<td>Link</td>
+				<td>Action</td>
+			</tr>
+			
+		<tr>
+						<td>1</td>
+						<td>Search Engine</td>
+						<td>Google</td>
+						<td>https://www.google.com</td>
+						<td><button onclick="copy(this);">Copy</button><button onclick="edit(this);">Edit</button><button onclick="remove(this);">Delete</button></td>
+					</tr></tbody>
+	</table>
+	<br><br>
+	<table style="display: none;">
+		<tbody id="category">
+			<tr>
+				<td>Category <button onclick="addCategory(this);">+</button></td>
+				<td>Action</td>
+			</tr>
+			
+			
+		<tr>
+						<td>Search Engine</td>
+						<td><button onclick="editCategory(this);">Edit</button><button onclick="removeCategory(this);">Delete</button></td>
+					</tr></tbody>
+	</table>
+
+
+
+
+<script type="text/javascript">
+	function download(filename) {
+	 var element = document.createElement('a');
+	 element.setAttribute('href', 'data:text/plain;charset=utf-8,' + 
+	 encodeURIComponent(document.querySelector("html").innerHTML));
+	 element.setAttribute('download', filename);
+
+	  element.style.display = 'none';
+	  document.body.appendChild(element);
+
+	  element.click();
+
+	  document.body.removeChild(element);
+	}
+	function add(){
+		let tbl = document.getElementById("tbl");
+		let category = document.getElementById("category").getElementsByTagName("tr");
+		let sel = "<select>";
+		for(let i=1;i<category.length;i++){
+			sel += "<option>"+category[i].getElementsByTagName("td")[0].innerHTML+"</option>";
+		}
+		sel += "</select>";
+		let res = `<tr>
+						<td>`+tbl.getElementsByTagName("tr").length+`</td>
+						<td>`+sel+`</td>
+						<td><input type="text" value=""></td>
+						<td><input type="text" value=""></td>
+						<td><button onclick="done(this);">done</button></td>
+					</tr>`;
+		tbl.innerHTML += res;
+	}
+	function edit(e){
+		let td = e.parentElement.parentElement.getElementsByTagName("td");
+		let category = document.getElementById("category").getElementsByTagName("tr");
+		let sel = "<select>";
+		let tmp;
+		for(let i=1;i<category.length;i++){
+			tmp = category[i].getElementsByTagName("td")[0].innerHTML;
+			if(td[1].innerHTML==tmp) sel += "<option selected>"+tmp+"</option>";
+			else sel += "<option>"+tmp+"</option>";
+		}
+		sel += "</select>";
+		td[1].innerHTML = sel;
+		td[2].innerHTML = "<input type='text' value='"+td[2].innerHTML+"' />";
+		td[3].innerHTML = "<input type='text' value='"+td[3].innerHTML+"' />";
+		td[td.length-1].innerHTML = "<button onclick='done(this);'>done</button>";
+	}
+	function done(e){
+		let td = e.parentElement.parentElement.getElementsByTagName("td");
+		td[1].innerHTML = td[1].getElementsByTagName('select')[0].value;
+		td[2].innerHTML = td[2].getElementsByTagName('input')[0].value;
+		td[3].innerHTML = td[3].getElementsByTagName('input')[0].value;
+		td[td.length-1].innerHTML = "<button onclick='copy(this);'>Copy</button><button onclick='edit(this);'>Edit</button><button onclick='remove(this);'>Delete</button>";
+		sort();
+	}
+	function remove(e){
+		e.parentElement.parentElement.remove();
+		// Re Number
+		rows = document.getElementById("tbl").parentElement.rows;
+		for (i = 1; i < (rows.length - 1); i++)
+			rows[i].getElementsByTagName("TD")[0].innerHTML = i;
+	}
+	function sort() {
+		var table, rows, switching, i, x, y, shouldSwitch,tmp;
+		table = document.getElementById("tbl").parentElement;
+		switching = true;
+		/*Make a loop that will continue until
+		no switching has been done:*/
+		while (switching) {
+			//start by saying: no switching is done:
+			switching = false;
+			rows = table.rows;
+			/*Loop through all table rows (except the
+			first, which contains table headers):*/
+			for (i = 1; i < (rows.length - 1); i++) {
+				//start by saying there should be no switching:
+				shouldSwitch = false;
+				/*Get the two elements you want to compare,
+				one from current row and one from the next:*/
+				x = rows[i].getElementsByTagName("TD")[1];
+				y = rows[i + 1].getElementsByTagName("TD")[1];
+				//check if the two rows should switch place:
+				if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+					//if so, mark as a switch and break the loop:
+					shouldSwitch = true;
+					break;
+				}
+				//compare name
+				if(x.innerHTML.toLowerCase() == y.innerHTML.toLowerCase()){
+					x = rows[i].getElementsByTagName("TD")[2];
+					y = rows[i + 1].getElementsByTagName("TD")[2];
+					if ( x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase() ) {
+						//if so, mark as a switch and break the loop:
+						shouldSwitch = true;
+						break;
+					}
+				}
+			}
+			if (shouldSwitch) {
+				/*If a switch has been marked, make the switch
+				and mark that a switch has been done:*/
+				tmp = rows[i].getElementsByTagName("TD")[0].innerHTML;
+				rows[i].getElementsByTagName("TD")[0].innerHTML = rows[i+1].getElementsByTagName("TD")[0].innerHTML;
+				rows[i+1].getElementsByTagName("TD")[0].innerHTML = tmp;
+				rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+				switching = true;
+			}
+		  }
+	}
+	function search(e){
+		let tr = document.getElementById("tbl").getElementsByTagName("tr");
+		let td;
+		let filter = e.value.toUpperCase();
+		for (i = 1; i < tr.length; i++) {
+			td = tr[i].getElementsByTagName("td")[1];
+			if(td){
+				td = td.textContent || td.innerText;
+				if (td.toUpperCase().indexOf(filter) > -1) {
+					tr[i].style.display = "";
+					continue;
+				} else {
+					tr[i].style.display = "none";
+				}
+			}
+			td = tr[i].getElementsByTagName("td")[2];
+			if(td){
+				td = td.textContent || td.innerText;
+				if (td.toUpperCase().indexOf(filter) > -1) {
+					tr[i].style.display = "";
+				} else {
+					tr[i].style.display = "none";
+				}
+			}
+		}
+	}
+	
+	function copy(e){
+		let val = e.parentElement.parentElement.getElementsByTagName("td")[3].innerHTML;
+		navigator.clipboard.writeText(val);
+		document.getElementById("msg").innerHTML = "copied to clipboard.";
+		document.getElementById("msg").style.display = "";
+
+		setTimeout(function(){
+		    document.getElementById("msg").style.display = "none";
+		}, 500);
+	}
+</script>
+<!-- Category Related script -->
+<script type="text/javascript">
+	function showHideCategory(e){
+		let dis = "none";
+		if(e!=null){
+			if(e.innerHTML=="Show Category"){
+				e.innerHTML = "Hide Category";
+				dis = "";
+			}else{
+				e.innerHTML = "Show Category";
+				dis = "none";
+			}
+		}
+		document.getElementById("category").parentElement.style.display = dis;
+	}
+	function addCategory(e){
+		let tbl = document.getElementById("category");
+		let res = `<tr>
+						<td><input type="text" value=""></td>
+						<td><button onclick="doneCategory(this);">done</button></td>
+					</tr>`;
+		tbl.innerHTML += res;
+	}
+	function editCategory(e){
+		let td = e.parentElement.parentElement.getElementsByTagName("td");
+		td[0].innerHTML = "<input type='text' value='"+td[0].innerHTML+"' />";
+		td[1].innerHTML = "<button onclick='doneCategory(this);'>done</button>";
+	}
+	function doneCategory(e){
+		let td = e.parentElement.parentElement.getElementsByTagName("td");
+		td[0].innerHTML = td[0].getElementsByTagName("input")[0].value;
+		td[1].innerHTML = "<button onclick='editCategory(this);'>Edit</button><button onclick='removeCategory(this);'>Delete</button>";
+	}
+	function removeCategory(e){
+		e.parentElement.parentElement.remove();
+	}
+</script>
+
+</body></html>
