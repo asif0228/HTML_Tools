@@ -30,4 +30,13 @@ Collections of tools bases on HTML, CSS, JS only
 - "Delete" to delete the specific Topic / Item
 - Right click and save as over the current file for keeping Series Tracks saved.
 
+## Event Logger
+- Download "Event_Logger.html" and open in browser
+- "Add New" to add new event.
+- Search for searching (type and press enter, to reset clear search box and press enter).
+- "Edit" to edit the specific Event
+- "Delete" to delete the specific Event
+- Right click and save as over the current file for keeping Series Tracks saved.
+
+
 ## More Coming Soon
