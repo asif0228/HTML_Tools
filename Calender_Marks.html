@@ -4821,7 +4821,7 @@
 		for(let i=0;i<td.length-1;i++){
 			td[i].innerHTML = td[i].getElementsByTagName('input')[0].value;
 		}
-		td[td.length-1].innerHTML = "<button onclick='edit(this);'>Edit</button><button onclick='remove(this);''>Delete</button>";
+		td[td.length-1].innerHTML = "<button onclick='edit(this);'>Edit</button><button onclick='remove(this);'>Delete</button>";
 		//sort();
 	}
 	function add(e){
@@ -4842,6 +4842,7 @@
 		for(let i=0;i<month;i++){
 			day += daysInMonth[i];
 		}
+		document.getElementsByClassName("sel")[0].classList.remove("sel");
 		let tr = document.getElementById(tblName).parentElement.querySelectorAll(":scope > tbody > tr, :scope > tr")[day];
 		tr.classList.add("sel");
 		window.scrollTo(0, tr.offsetTop - tr.offsetHeight);
